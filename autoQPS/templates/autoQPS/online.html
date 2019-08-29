@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AutoMission</title>
+
+    <!-- Bootstrap -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">-->
+  <link rel="stylesheet" href="/static/css/amazeui.min.css">
+  <link rel="stylesheet" href="/static/css/app.css">
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/i18n/defaults-*.min.js"></script>-->
+    <!--<link href="static/css/justified-nav.css" rel="stylesheet">-->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!--<style type="text/css">.form-group1,.form-group2 {float: left;}.clearfix{clear:both}</style>-->
+  </head>
+  <body>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/static/js/bootstrap.min.js"></script>
+<!--<![endif]-->
+<script src="/static/js/amazeui.min.js"></script>
+<script src="/static/js/highcharts.js"></script>
+<script src="/static/js/series-label.js"></script>
+<script src="/static/js/exporting.js"></script>
+
+<!--
+    {% if uid %}
+        <div style="margin-right:20px;float: right;"><label>{{uid}}&nbsp;</label><a href="/logout">Logout</a></div>
+    {% else %}
+        <div style="margin-right:20px;float: right;"><label>{{uid}}&nbsp;</label><a href="https://login.sogou-inc.com/?appid=1138&sso_redirect=http://automission.web.tc.ted/&targetUrl=">Login</a></div>
+    {% endif %}
+-->
+        <div class="container">
+    <h1>AutoQueryQPS</h1>
+
+      <!-- The justified navigation menu is meant for single line per list item.
+           Multiple lines will require custom code not provided by Bootstrap. -->
+<!--<ul class="nav nav-tabs nav-justified">
+    <li><a href="/autoqps">Get Start</a></li>
+    <li><a href="/autoqps/task_queue">Task Queue</a></li>
+    <li class="active"><a href="#">Statistic</a></li>
+</ul>-->
+
+
+<br>
+<br>
+<div id="chart_container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+        <script type="text/javascript">
+Highcharts.chart('chart_container', {
+    chart: {
+        type: 'spline'
+    },
+    title: {
+        text: 'Online QPS in history'
+    },
+    subtitle: {
+        text: ''
+    },
+    xAxis: {
+        categories: [
+{% for item in point_list %}
+    '{{ item.test_time }}'
+{% if not forloop.last %},{% endif %}
+{% endfor %}
+]
+    },
+    yAxis: {
+        title: {
+            text: 'qps'
+        },
+        labels: {
+            formatter: function () {
+                return this.value;
+            }
+        }
+    },
+    tooltip: {
+        crosshairs: true,
+        shared: true
+    },
+    plotOptions: {
+        spline: {
+            marker: {
+                radius: 4,
+                lineColor: '#666666',
+                lineWidth: 1
+            }
+        }
+    },
+    series: [{
+        name: 'qps',
+        marker: {
+            symbol: 'square'
+        },
+        data: [
+{% for item in point_list %}
+{{ item.test_qps }}{% if not forloop.last %},{% endif %}
+{% endfor %}
+]
+
+    }]
+});
+        </script>
+<!--<script src="/static/js/highcharts.js"></script>-->
+<br>
+<br>
+<table class="table">
+<thead>
+    <tr>
+        <th>测试时间</th>
+        <th>query版本(tag)</th>
+        <th>数据日期</th>
+        <th>dump日期</th>
+        <th>avg-QPS</th>
+    </tr>
+</thead>
+<tbody>
+{% for item in point_list %}
+<tr>
+<th>{{ item.test_time }}</th><th>{{ item.testsvn }}</th><th>{{item.data_time}}</th><th>{{item.dump_time}}</th><th>{{item.test_qps}}</th>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+  </body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AutoMission</title>
+
+    <!-- Bootstrap -->
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">-->
+  <link rel="stylesheet" href="static/css/amazeui.min.css">
+  <link rel="stylesheet" href="static/css/app.css">
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/i18n/defaults-*.min.js"></script>-->
+    <!--<link href="static/css/justified-nav.css" rel="stylesheet">-->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!--<style type="text/css">.form-group1,.form-group2 {float: left;}.clearfix{clear:both}</style>-->
+  </head>
+  <body>
+<a href="http://automission.web.tc.ted">&lt;&lt;&nbsp;back to homepage</a>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="static/js/bootstrap.min.js"></script>
+<!--<![endif]-->
+<script src="static/js/amazeui.min.js"></script>
+
+    {% if uid %}
+        <div style="margin-right:20px;float: right;"><label>{{uid}}&nbsp;</label><a href="/logout">Logout</a></div>
+    {% else %}
+        <div style="margin-right:20px;float: right;"><label>{{uid}}&nbsp;</label><a href="https://login.sogou-inc.com/?appid=1138&sso_redirect=http://automission.web.tc.ted/&targetUrl=">Login</a></div>
+    {% endif %}
+        <div class="container">
+    <h1>AutoQueryQPS</h1>
+
+      <!-- The justified navigation menu is meant for single line per list item.
+           Multiple lines will require custom code not provided by Bootstrap. -->
+<ul class="nav nav-tabs nav-justified">
+    <li class="active"><a href="#">Get Start</a></li>
+    <li><a href="/autoqps/task_queue">Task Queue</a></li>
+    <li><a href="/autoqps/statistic">Statistic</a></li>
+</ul>
+<form class="form-horizontal" role="form" action="/add" method="post">
+
+    <br>
+    <br>
+    <br>
+
+        <div class="col-sm-10">
+        <label for="remarks">remarks<font color="red">*</font>:&nbsp;&nbsp;&nbsp;</label>
+        <textarea required class="form-control" name="remarks" id="remarks" rows="1" cols="80" placeholder="备注，如修改功能点 or 哪个测试任务" ></textarea>
+        <br/>
+        </div>
+
+    <br>
+    <br>
+    <br>
+    <div class="col-sm-10">
+    <label for="testsvn">test svn <font color="red">*</font>:&nbsp;&nbsp;&nbsp;</label>
+        <input type="checkbox" name="test_env_update" value="1" />&nbsp;
+        <a class="tooltip-show" data-toggle="tooltip" title="如果本次代码和上一次执行的代码一致，默认不更新环境，选择此按钮会强制更新">Force Update</a><br>
+        <textarea required class="form-control" name="test_svn" id="test_svn" rows="10" cols="80" placeholder="base svn(dailybuild->job.ini format):" ></textarea><br/>
+        <script>
+            $(function () { $("[data-toggle='tooltip']").tooltip(); });
+        </script>
+    </div>
+    <br/>
+    <div class="col-sm-10">
+    <label for="testsvn">base svn:&nbsp;&nbsp;&nbsp;</label>
+        <input type="checkbox" name="base_env_update" value="1" />&nbsp;
+        <a class="tooltip-show" data-toggle="tooltip" title="如果本次代码和上一次执行的代码一致，默认不更新环境，选择此按钮会强制更新">Force Update</a><br>
+        <textarea class="form-control" name="base_svn" id="base_svn" rows="10" cols="80" placeholder="base svn(dailybuild->job.ini format):" ></textarea><br/>
+        <label for="testsvn">new data:</label><br/>
+    </div>
+    </br>
+        <div class="input-group col-sm-10" style="padding: 15px 15px 15px;">
+            <span class="input-group-addon">datatest01.web.sjs.ted:</span>
+            <input type="text" name="newdata" class="form-control" placeholder="/search/odin/autotest/...">
+        </div>
+        <label for="new data"><font color="gray">数据必须放在datatest01.web.sjs.ted:/search/odin/autotest/下面，平台会把你的数据和配置拷贝到测试环境</font></label><br/>
+        <label for="new data"><font color="gray">例如: 填写 datatest01.web.sjs.ted:/search/odin/autotest/chenzhige/, 平台会做如下操作:</font></label><br/>
+        <label for="new data"><font color="gray">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rsync -ravl datatest01.web.sjs.ted::search/odin/autotest/chenzhige/conf/*&nbsp;&nbsp;${TEST_ENV}/client_application/conf/</font></label><br/>
+        <label for="new data"><font color="gray">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rsync -ravl datatest01.web.sjs.ted::search/odin/autotest/chenzhige/data/*&nbsp;&nbsp;${TEST_ENV}/client_application/data/</font></label><br/>
+    </br>
+        <div class="input-group col-sm-10" style="padding: 15px 15px 15px;">
+        <label for="testsvn">new disk:</label><br/>
+        <input type="checkbox" name="newdisk_update" value="1" />&nbsp;
+        <a class="tooltip-show" data-toggle="tooltip" title="如果本次数据的路径和上一次任务的路径一致，默认不更新数据，选择此按钮会强制更新">Force Update</a><br>
+            <input type="text" name="newdisk" class="form-control" placeholder="">
+        </div>
+        <label for="new data"><font color="gray">使用新的倒排文件，填写格式为host:password:datapath。两份倒排的话用||隔开，host:password:datapath||host:password:datapath，前面用于test环境，后面用于base环境。</font></label><br/>
+  <div class="form-group">
+<div class="am-btn-group" data-am-button>
+  <!--默认选中状态设置-->
+    <br>
+    <label for="testsvn">Select test item:(放在上面总是忘选, 放这试试 )</label><br/>
+
+  <label class="am-btn am-btn-primary">
+    <input id="qps-check-box" type="checkbox" class="needsclick" name="qps" value="1">Qps
+  </label>
+  <label class="am-btn am-btn-primary">
+    <input id="diff-check-box" type="checkbox" class="needsclick" name="diff" value="1">Diff
+  </label>
+</div>
+
+        <script>
+            function CheckBoxChs(){
+//                alert("aaa");
+                var cbs = document.getElementsByClassName("needsclick");
+//                alert("bbb");
+                var checkNum = 0;
+                for (var i=0; i<cbs.length; i++) {
+                    if (cbs[i].checked){
+                        checkNum++;
+                    }
+                }
+                alert("slect num= " + checkNum);
+                if (checkNum ==0){
+                    alert("请至少选择一项")
+                    return false;
+                }
+            }
+        </script>
+
+
+
+
+<br/>
+<br/>
+    <div class="col-sm-offset-2">
+      <button type="submit" class="btn btn-primary" onclick="return CheckBoxChs()">开始</button>
+<!--      <button type="submit" class="btn btn-primary">开始</button> -->
+    </div>
+  </div>
+</form>
+</div>
+  </body>
+</html>

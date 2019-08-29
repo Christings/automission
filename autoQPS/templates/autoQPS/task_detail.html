@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    {% ifequal task_detail.status 0 %}<meta http-equiv="refresh" content="5">{% endifequal %}
+    {% ifequal task_detail.status 1 %}<meta http-equiv="refresh" content="5">{% endifequal %}
+    {% ifequal task_detail.status 2 %}<meta http-equiv="refresh" content="5">{% endifequal %}
+    <title>AutoMission</title>
+    <!-- Bootstrap -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/amazeui.min.css">
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="/static/css/amazeui.min.css">
+  <link rel="stylesheet" href="/static/css/app.css">
+    <!--<link href="static/css/justified-nav.css" rel="stylesheet">-->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!--<style type="text/css">.form-group1,.form-group2 {float: left;}.clearfix{clear:both}</style>-->
+  </head>
+  <body>
+<script src="/static/js/amazeui.min.js"></script>
+    {% if uid %}
+        <div style="margin-right:20px;float: right;"><label>{{uid}}&nbsp;</label><a href="/logout">Logout</a></div>
+    {% else %}
+        <div style="margin-right:20px;float: right;"><label>{{uid}}&nbsp;</label><a href="https://login.sogou-inc.com/?appid=1138&sso_redirect=http://automission.web.tc.ted/&targetUrl=">Login</a></div>
+    {% endif %}
+<br>
+<a href="http://automission.web.tc.ted/task_queue">&lt;&lt;&nbsp;back to task queue</a>
+<br>
+<table class="table">
+<thead>
+    <tr>
+        <th>Id</th>
+        <th>Create time</th>
+        <th>Start time</th>
+        <th>Running IP</th>
+        <th>Status</th>
+        <th>TestItem</th>
+        <th>User</th>
+        <th>Remarks</th>
+        <th></th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <th>{{ task_detail.task_id }}</th>
+        <th>{{ task_detail.create_time }}</th>
+        <th>{{ task_detail.start_time }}</th>
+        <th>{{ task_detail.runningIP }}</th>
+        {% ifequal task_detail.status 0 %}<th><font color="gray">Waiting</font></th>{% endifequal %}
+        {% ifequal task_detail.status 1 %}<th><font color="cream">Ready</font></th>{% endifequal %}
+        {% ifequal task_detail.status 2 %}<th><font color="green">Running</font></th>{% endifequal %}
+        {% ifequal task_detail.status 3 %}<th><font color="red">Error</font></th>{% endifequal %}
+        {% ifequal task_detail.status 4 %}<th><font color="blue">Finished</font></th>{% endifequal %}
+        {% ifequal task_detail.status 5 %}<th><font color="orange">Canceled</font></th>{% endifequal %}
+        {% ifequal task_detail.status 6 %}<th><font color="orange">Canceling</font></th>{% endifequal %}
+        <th>{{ task_detail.testitem }}</th>
+        <th>{{ task_detail.user }}</th>
+        <th>{{ task_detail.remarks }}</th>
+{% ifequal task_detail.status 2 %}
+        <th>
+ <script type="text/javascript">
+function get(){
+    $.get('/set_cancel?id={{ task_detail.task_id }}');
+}
+</script>
+<button onclick="get()" type="button" name="cancel_but" id="fat-btn" class="btn btn-primary" data-loading-text="Canceling..." data-complete-text="Canceled" type="button"> Cancel
+</button>
+<script>
+    $(function() {
+        $('.btn').click(function () {
+  var $btn = $(this)
+  $btn.button('loading');
+    setTimeout(function(){
+      $btn.button('complete'); 
+  }, 2000);
+});
+    });  
+
+    </script>
+        </th>
+{% endifequal %}
+    </tr>
+</tbody>
+<table>
+{% ifequal task_detail.status 4 %}
+<button
+  type="button"
+  class="am-btn am-btn-success"
+    data-toggle="modal"
+  id="doc-prompt-toggle"
+    data-target="#myModal">
+  Run Again
+</button>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Run Again(<font color="red">Test Item和Force Update需要重新选择</font>)
+                </h4>
+            </div>
+        <form action="re_add" method="post">
+            <div class="modal-body">
+    <input type="text" readonly name="mission_id" width="4" value="{{task_detail.task_id}}"><br>
+    <b>Test Item:</b>&nbsp;
+    <input id="qps-check-box" type="checkbox" {% ifequal test_item_mark.item_qps 1 %}checked{% endifequal %} name="qps" value="1">Qps
+    <input id="diff-check-box" type="checkbox" {% ifequal test_item_mark.item_diff 1 %}checked{% endifequal %} name="diff" value="1">Diff
+    <br>
+
+
+                              <label for="remarks">remarks<font color="red">*</font>:&nbsp;&nbsp;&nbsp;</label>
+                              <textarea required class="form-control" name="remarks" id="remarks" rows="1" cols="80" placeholder="备注，如修改功能点 or 哪个测试任务" ></textarea>
+                              <br/>
+
+
+        <label for="testsvn">test svn:</label>&nbsp;&nbsp;&nbsp;
+        <input type="checkbox" name="test_env_update" value="1" />&nbsp;
+        <a class="tooltip-show" data-toggle="tooltip" title="如果本次代码和上一次执行的代码一致，默认不更新环境，选择此按钮会强制更新"><font color="red">Force Update</font></a><br>
+                <textarea class="form-control" name="test_svn" id="test_svn" rows="10" cols="120" readonly >{% for line in task_detail.testsvn %}{{ line }}
+{% endfor %}</textarea><br/>
+            {% ifnotequal task_detail.onlinesvn|length 1 %}
+        <label for="testsvn">base svn:</label>&nbsp;&nbsp;&nbsp;
+        <input type="checkbox" name="base_env_update" value="1" />&nbsp;
+        <a class="tooltip-show" data-toggle="tooltip" title="如果本次代码和上一次执行的代码一致，默认不更新环境，选择此按钮会强制更新"><font color="red">Force Update</font></a><br>
+                <textarea class="form-control" name="base_svn" id="test_svn" rows="10" cols="120" readonly >{% for line in task_detail.onlinesvn %}{{ line }}
+{% endfor %}</textarea><br/>
+            {% endifnotequal %}
+            {% ifnotequal task_detail.newdatapath|length 0 %}
+            <input readonly type="text" name="newdata" class="form-control" value="{{task_detail.newdatapath}}">
+            {% endifnotequal %}
+            {% ifnotequal task_detail.querydata|length 0 %}
+            <label for="testsvn">new disk:</label>&nbsp;&nbsp;&nbsp;
+            <input type="checkbox" name="newdisk_update" value="1" />&nbsp;<font color="red">Force Update</font>
+            <input readonly type="text" name="newdisk" class="form-control" value="{{task_detail.querydata}}">
+            {% endifnotequal %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    开始
+                </button>
+            </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+{% endifequal %}
+<div name="result" style="padding: 5px 10px 60px 60px">
+    {% ifnotequal test_qps|length 1 %}
+        <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>QPS</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td width="200">Test qps
+                {% ifequal qps_raise.qpstype "gt" %}
+                    <span class="label label-success">+{{qps_raise.value}}%</span>
+                {% endifequal %}
+                {% ifequal qps_raise.qpstype "lt" %}
+                    <span class="label label-danger">-{{qps_raise.value}}%</span>
+                {% endifequal %}
+                {% ifequal qps_raise.qpstype "eq" %}
+                    <span class="label label-warning">balance</span>
+                {% endifequal %}
+                </td>
+                <td width="200">Base qps</td>
+            </tr>
+            <tr>
+                <td>{% for line in test_qps %}{{ line }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
+                <td>{% for line in base_qps %}{{ line }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
+            </tr>
+        </tbody>
+        </table>
+    {% endifnotequal %}
+
+    {% ifnotequal diff|length 1 %}
+        <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Diff</th>
+            </tr>
+        </thead>
+        <tbody>
+            <td>
+            {% for line in diff %}
+                {{ line }}
+                {% if not forloop.last %}<br>{% endif %}
+            {% endfor %}
+            </td>
+        </tbody>
+        </table>
+    {% endifnotequal %}
+</div>
+<div name="detail">
+<table class = "table table-hover">
+<thead>
+    <tr>
+        <th>Task Detail:</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+    <td>
+    Test svn:<br>
+    {% for line in task_detail.testsvn %}
+        {{ line }}
+        {% if not forloop.last %}<br>{% endif %}
+    {% endfor %}
+    </td>
+    {% ifnotequal task_detail.onlinesvn|length 1 %}
+        <td>
+        Base svn:<br>
+        {% for line in task_detail.onlinesvn %}
+            {{ line }}
+            {% if not forloop.last %}<br>{% endif %}
+        {% endfor %}
+        </td>
+    {% endifnotequal %}
+    </tr>
+    <tr>
+    <td colspan="2">
+        {{task_detail.newdatapath}}<br>
+        {{task_detail.querydata}}
+    </td>
+    </tr>
+</tbody>
+</table>
+</div>
+<div name="log">
+<table class = "table table-hover">
+<thead>
+    <tr><th>Log:</th></tr>
+</thead>
+<tbody>
+    <tr><td>
+    {% for line in errlog %}
+        {{ line }}<br>
+    {% endfor %}
+    </td></tr>
+</div>
+</div>
+
+  </body>
+</html>

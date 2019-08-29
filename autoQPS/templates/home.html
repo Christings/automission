@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AutoMission</title>
+
+    <!-- Bootstrap -->
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">-->
+  <link rel="stylesheet" href="static/css/amazeui.min.css">
+  <link rel="stylesheet" href="static/css/app.css">
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/i18n/defaults-*.min.js"></script>-->
+    <!--<link href="static/css/justified-nav.css" rel="stylesheet">-->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!--<style type="text/css">.form-group1,.form-group2 {float: left;}.clearfix{clear:both}</style>-->
+    <style type="text/css">
+    a:link { 
+color:#FFFFFF; 
+text-decoration:none;
+} 
+a:visited { 
+color:#FFFFFF; 
+text-decoration:none; 
+} 
+a:hover { 
+color:#000000; 
+text-decoration:none; 
+} 
+a:active { 
+color:#FFFFFF; 
+text-decoration:none; 
+} 
+    </style>
+  </head>
+  <body style=background-image:url("/static/pic/sea.jpg")>
+    
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="static/js/bootstrap.min.js"></script>
+<!--<![endif]-->
+<script src="static/js/amazeui.min.js"></script>
+
+    {% if uid %}
+        <div style="margin-right:20px;float: right;"><label>{{uid}}&nbsp;</label><a href="/logout">Logout</a></div>
+    {% else %}
+        <div style="margin-right:20px;float: right;"><label>{{uid}}&nbsp;</label><a href="https://login.sogou-inc.com/?appid=1138&sso_redirect=http://automission.web.tc.ted/&targetUrl=">Login</a></div>
+    {% endif %}
+        <div class="container">
+    <div class="row">
+    <h1><font color="white">AutoMission</font></h1>
+    <div class="col-md-4">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="table-responsive">
+        <table class="table">
+            <tbody>
+            <tr><td><font size="6" color="white"><a href="/autoqps">AutoQueryQPS</a></font></td></tr>
+            <tr><td><font size="6" color="white"><a href="/autowapsh">AutoWAPsh</a></font></td></tr>
+            <tr><td><font size="6" color="white"><a href="/autowapshcpp">AutoWAPshCPP</a></font></td></tr>
+            <tr><td><font size="6" color="white"><a href="/autopcsh">AutoPCsh</a></font></td></tr>
+            <tr><td><font size="6" color="white"><a href="/autocacheqps">AutoCacheQPS</a></font></td></tr>
+            <tr><td><font size="6" color="white"><a href="/autocachequick">AutoCacheQuick</a></font></td></tr>
+            <tr><td></td></tr>
+            </tbody>
+        </table>
+    </div>
+    
+    </div><br>
+    <div class="col-md-8" style="background-color: #8A2BE2;box-shadow: inset 1px -1px 2px , inset -1px 1px 1px #888;">
+    <br>
+    <br>
+       <font size="6" color="white">关于merge代码和代码提测，分为4个级别：</font><br><br>
+        <font size="3" color="white">
+第一个级别，改动比较大或者涉及性能，正常测试，测试周期大约是几天。<br>
+第二个级别，改动不大，快速测试，今天测明天上线，代码需要在5点前给出。测试这边湖跑回归脚本（缓存一致性，空跑实验一致性，缓存兼容性，机房一致性对比，问答聚合，新闻聚合，文档聚合等脚本）和稳定性。——5点之后走下次的快速测试。<br>
+第三个级别，改动小，只测稳定性，可以在晚上8点把代码合入，跟明天要上线的代码一起跑稳定性。（需要leader审批）<br>
+第四个级别，改动很小，完全不需要测试，在上线前合入。（需要leader进行代码review） <br>
+        </font>
+        <br><br>
+        <font size="6" color="white">不能提快速测试的情况：</font><br><br>
+        <font size="3" color="white">
+有耦合功能点修改的。<br>
+修改对上下游有耦合的。<br>
+重大功能的增加的。<br>
+涉及缓存的。<br>
+基础功能或者组件修改的。<br>
+        </font>
+    <br>
+    </div>
+    </div>
+    </body>
+</html>
